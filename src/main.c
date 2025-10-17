@@ -78,7 +78,6 @@ int main(int argc, char *argv[]) {
 
     output_file(dbfd, header);
 
-    close_db_file(dbfd);
 
     return 0;
 }

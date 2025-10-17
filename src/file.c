@@ -36,13 +36,3 @@ int open_db_file(char *filename) {
     return fd;
 }
 
-
-int close_db_file(int fd) {
-    if (fd < 0) {
-        printf("Got a bad FD from the user\n");
-        return STATUS_ERROR;
-    }
-
-    close(fd);
-}
-
