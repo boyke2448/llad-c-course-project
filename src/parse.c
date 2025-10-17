@@ -11,7 +11,7 @@
 #include "parse.h"
 
 
-int output_file(int fd, struct dbheader_t *header) {
+int output_file(int fd, struct dbheader_t *header, struct employee_t *employees) {
     if (fd < 0) {
         printf("Got a bad FD from the user\n");
         return STATUS_ERROR;

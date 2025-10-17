@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {
             return -1;
         }
         
-        int header_status = create_db_header(dbfd, &header);
+        int header_status = create_db_header(&header);
         if (header_status == STATUS_ERROR) {
             printf("Could not crate header");
             return -1;
@@ -76,7 +76,7 @@ int main(int argc, char *argv[]) {
     printf("Newfile: %d\n", newfile);
     printf("Filepath: %s\n", filepath);
 
-    output_file(dbfd, header);
+    output_file(dbfd, header, NULL);
 
 
     return 0;
