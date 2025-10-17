@@ -78,6 +78,5 @@ int main(int argc, char *argv[]) {
 
     output_file(dbfd, header, NULL);
 
-
     return 0;
 }
