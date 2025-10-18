@@ -25,11 +25,6 @@ int output_file(int fd, struct dbheader_t *header, struct employee_t *employees)
 	lseek(fd, 0, SEEK_SET);
 
 	write(fd, header, sizeof(struct dbheader_t));
-	printf("Wrote header to file\n");
-	printf("Magic: 0x%x\n", ntohl(header->magic));
-	printf("Version: %u\n", ntohs(header->version));
-	printf("Count: %u\n", ntohs(header->count));
-	printf("Filesize: %u\n", ntohl(header->filesize));
 
 	for(int i = 0; i < ntohs(header->count); i++) {
 		employees[i].hours = htonl(employees[i].hours);
@@ -61,12 +56,6 @@ int validate_db_header(int fd, struct dbheader_t **headerOut) {
 	header->count = ntohs(header->count);
 	header->magic = ntohl(header->magic);
 	header->filesize = ntohl(header->filesize);
-
-	printf("Read header from file\n");
-	printf("Magic: 0x%x\n", header->magic);
-	printf("Version: %u\n", header->version);
-	printf("Count: %u\n", header->count);
-	printf("Filesize: %u\n", header->filesize);
 
 	if (header->magic != HEADER_MAGIC) {
 		printf("Impromper header magic\n");
@@ -190,5 +179,21 @@ int add_employee(struct dbheader_t *header, struct employee_t **employees, char 
 	header->count += 1;
 	header->filesize += sizeof(struct employee_t);
 	printf("Total sizeof employees: %zu\n", sizeof(*updated_employees));
+	return STATUS_SUCCESS;
+}
+
+int list_employees(struct dbheader_t *header, struct employee_t *employees) {
+	if(header == NULL || employees == NULL) {
+		printf("Got a null pointer from the user\n");
+		return STATUS_ERROR;
+	}
+
+	for(int i = 0; i < header->count; i++) {
+		printf("Employee %d:\n", i + 1);
+		printf("\tName: %s\n", employees[i].name);
+		printf("\tAddress: %s\n", employees[i].address);
+		printf("\tHours: %u\n", employees[i].hours);
+	}
+
 	return STATUS_SUCCESS;
 }

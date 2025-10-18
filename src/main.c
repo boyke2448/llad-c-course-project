@@ -12,6 +12,7 @@ void print_usage(char *argv[]) {
     printf("\t -n   - create new database file\n");
     printf("\t -f   - (required) path to database file\n");
     printf("\t -a  - add new employee to database\n");
+    printf("\t -l  - list employees in database\n");
     return;
 }
 
@@ -19,6 +20,7 @@ int main(int argc, char *argv[]) {
 	char *filepath = NULL;
     char *addstring = NULL;
 	bool newfile = false;
+    bool list = false;
     int c;
 
     int dbfd = -1;
@@ -36,6 +38,9 @@ int main(int argc, char *argv[]) {
 				break;
             case 'a':
                 addstring = optarg;
+                break;
+            case 'l':
+                list = true;
                 break;
 			case '?':
 				printf("Unknown option -%c\n", c);
@@ -87,10 +92,11 @@ int main(int argc, char *argv[]) {
     if(addstring != NULL) {
         add_employee(header, &employees, addstring);
     }
-    
-    printf("Newfile: %d\n", newfile);
-    printf("Filepath: %s\n", filepath);
 
+    if(list) {
+        list_employees(header, employees);
+    }
+    
     output_file(dbfd, header, employees);
 
     return 0;
