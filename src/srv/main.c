@@ -2,6 +2,11 @@
 #include <stdbool.h>
 #include <getopt.h>
 #include <stdlib.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <poll.h>
+#include <string.h>
+#include <unistd.h>
 
 #include "common.h"
 #include "file.h"
@@ -29,7 +34,7 @@ void poll_loop(unsigned short port, struct dbheader_t *header, struct employee_t
     int nfds = 1; // Start with one for the listening socket
     int opt = 1;
 
-    init_clients(&clientStates);
+    init_clients(clientStates);
 
     if ((listen_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         perror("socket");
@@ -65,7 +70,7 @@ void poll_loop(unsigned short port, struct dbheader_t *header, struct employee_t
 
     while (1) {
         int ii = 1;
-        for (int i = -; i < MAX_CLIENTS; i++) {
+        for (int i = 0; i < MAX_CLIENTS; i++) {
             if (clientStates[i].socket != -1) {
                 fds[ii].fd = clientStates[i].socket;
                 fds[ii].events = POLLIN;
@@ -85,7 +90,7 @@ void poll_loop(unsigned short port, struct dbheader_t *header, struct employee_t
                 continue;
             }
 
-            freeSlot = find_free_slot(&clientStates);
+            freeSlot = find_free_slot(clientStates);
             if(freeSlot == -1) {
                 printf("Max clients reached, rejecting connection\n");
                 close(conn_fd);
@@ -99,11 +104,11 @@ void poll_loop(unsigned short port, struct dbheader_t *header, struct employee_t
             n_events--;
         }
 
-        for(in ti = 1; i <= nfds && n_events > 0; i++) {
+        for(int i = 1; i <= nfds && n_events > 0; i++) {
             if(fds[i].revents & POLLIN) {
                 n_events--;
                 int fd = fds[i].fd;
-                int slot = find_slot_by_fd(&clientStates, fd);
+                int slot = find_slot_by_fd(clientStates, fd);
                 ssize_t bytes_read = read(fd, &clientStates[slot].buffer, sizeof(clientStates[slot].buffer));
                 if (bytes_read <= 0) {
                     close(fd);

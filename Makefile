@@ -20,13 +20,13 @@ clean:
 	rm -f *.db
 
 $(TARGET_SRV): $(OBJ_SRV)
-	gcc -o $@ $?
+	gcc -o $@ $? -std=c11
 
 $(OBJ_SRV): obj/srv/%.o: src/srv/%.c
-	gcc -c $< -o $@ -Iinclude
+	gcc -c $< -o $@ -Iinclude -std=c11
 
 $(TARGET_CLI): $(OBJ_CLI)
-	gcc -o $@ $?
+	gcc -o $@ $? -std=c11
 
 $(OBJ_CLI): obj/cli/%.o: src/cli/%.c
-	gcc -c $< -o $@ -Iinclude
+	gcc -c $< -o $@ -Iinclude -std=c11
