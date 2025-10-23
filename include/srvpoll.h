@@ -7,17 +7,21 @@ typedef enum {
     STATE_NEW,
     STATE_CONNECTED,
     STATE_DISCONNECTED,
-} clientstate_enum_t;
+    STATE_HELLO,
+    STATE_MSG,
+    STATE_GOODBYE,
+} state_e;
 
+// Structure to hold client state
 typedef struct {
-    int socket;
-    char buffer[1024];
-    clientstate_enum_t state;
-} clientstate_socket_t;
+    int fd;
+    state_e state;
+    char buffer[4096];
+} clientstate_t;
 
-void init_clients(clientstate_socket_t *clientStates);
-int find_free_slot(clientstate_socket_t *clientStates);
-int find_slot_by_fd(clientstate_socket_t *clientStates, int fd);
+void init_clients(clientstate_t *clientStates);
+int find_free_slot(clientstate_t *clientStates);
+int find_slot_by_fd(clientstate_t *clientStates, int fd);
 
 #endif // SRVPOLL_H
 

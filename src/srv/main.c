@@ -13,7 +13,7 @@
 #include "parse.h"
 #include "srvpoll.h"
 
-clientstate_socket_t clientStates[MAX_CLIENTS] = {0};
+clientstate_t clientStates[MAX_CLIENTS] = {0};
 
 void print_usage(char *argv[]) {
     printf("Usage: %s -n -f <database_file>\n", argv[0]);
@@ -71,8 +71,8 @@ void poll_loop(unsigned short port, struct dbheader_t *header, struct employee_t
     while (1) {
         int ii = 1;
         for (int i = 0; i < MAX_CLIENTS; i++) {
-            if (clientStates[i].socket != -1) {
-                fds[ii].fd = clientStates[i].socket;
+            if (clientStates[i].fd != -1) {
+                fds[ii].fd = clientStates[i].fd;
                 fds[ii].events = POLLIN;
                 ii++;
             }
@@ -95,7 +95,7 @@ void poll_loop(unsigned short port, struct dbheader_t *header, struct employee_t
                 printf("Max clients reached, rejecting connection\n");
                 close(conn_fd);
             } else {
-                clientStates[freeSlot].socket = conn_fd;
+                clientStates[freeSlot].fd = conn_fd;
                 clientStates[freeSlot].state = STATE_CONNECTED;
                 nfds++;
                 printf("New client connected, slot %d\n", freeSlot);
@@ -115,7 +115,7 @@ void poll_loop(unsigned short port, struct dbheader_t *header, struct employee_t
                     if(slot == -1){
                         printf("Unknown client disconnected\n");
                     } else {
-                        clientStates[slot].socket = -1;
+                        clientStates[slot].fd = -1;
                         clientStates[slot].state = STATE_DISCONNECTED;
                         printf("Client on slot %d disconnected\n", slot);
                         nfds--;

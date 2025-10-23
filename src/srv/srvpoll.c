@@ -1,21 +1,24 @@
 #include <string.h>
 #include "srvpoll.h"
 
+void handle_client_fsm(struct dbheader_t *dbhdr, struct employee_t **employeeptr, clientstate_t *client, int dbfd) {
+    
+}
 
-void init_clients(clientstate_socket_t *clientStates) {
+void init_clients(clientstate_t *clientStates) {
     for (int i = 0; i < MAX_CLIENTS; i++) {
-        clientStates[i].socket = -1;
+        clientStates[i].fd = -1;
         clientStates[i].state = STATE_NEW;
-        memset(clientStates[i].buffer, 0, sizeof(clientStates[i].buffer));
+        memset(&clientStates[i].buffer, 0, sizeof(clientStates[i].buffer));
     }
 }
 
 
-int find_free_slot(clientstate_socket_t *clientStates)
+int find_free_slot(clientstate_t *clientStates)
 {
     for (int i = 0; i < MAX_CLIENTS; i++)
     {
-        if (clientStates[i].socket == -1)
+        if (clientStates[i].fd == -1)
         {
             return i;
         }
@@ -23,11 +26,11 @@ int find_free_slot(clientstate_socket_t *clientStates)
     return -1;
 }
 
-int find_slot_by_fd(clientstate_socket_t *clientStates, int fd)
+int find_slot_by_fd(clientstate_t *clientStates, int fd)
 {
     for (int i = 0; i < MAX_CLIENTS; i++)
     {
-        if (clientStates[i].socket == fd)
+        if (clientStates[i].fd == fd)
         {
             return i;
         }
