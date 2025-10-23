@@ -136,6 +136,7 @@ int main(int argc, char *argv[]) {
     char *addstring = NULL;
 	bool newfile = false;
     bool list = false;
+    unsigned short port = 8080;
     int c;
 
     int dbfd = -1;
@@ -143,7 +144,7 @@ int main(int argc, char *argv[]) {
     struct employee_t *employees = NULL;
 	
 
-	while ((c = getopt(argc, argv, "nf:a:l")) != -1) {
+	while ((c = getopt(argc, argv, "nf:a:lp:")) != -1) {
 		switch (c) {
 			case 'n':
 				newfile = true;
@@ -156,6 +157,9 @@ int main(int argc, char *argv[]) {
                 break;
             case 'l':
                 list = true;
+                break;
+            case 'p':
+                port = atoi(optarg);
                 break;
 			case '?':
 				printf("Unknown option -%c\n", c);
@@ -212,7 +216,7 @@ int main(int argc, char *argv[]) {
         list_employees(header, employees);
     }
 
-    poll_loop(8080, header, employees);
+    poll_loop(port, header, employees);
     
     output_file(dbfd, header, employees);
 
