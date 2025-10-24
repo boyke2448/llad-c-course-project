@@ -10,7 +10,7 @@ void handle_client_fsm(struct dbheader_t *dbhdr, struct employee_t **employees, 
     hdr->type = ntohs(hdr->type);
     hdr->len = ntohs(hdr->len);
 
-    switch (hdr->type)
+    switch (client->state)
     {
     case STATE_HELLO:
         if(hdr->type != MSG_HELLO_REQ || hdr->len != 1){

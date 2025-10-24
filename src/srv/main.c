@@ -124,6 +124,8 @@ void poll_loop(unsigned short port, struct dbheader_t *header, struct employee_t
                 else {
                     printf("Received %zd bytes from client on slot %d: %s\n", bytes_read, slot, clientStates[slot].buffer);
                     // Here you would typically process the received data
+                    clientStates[slot].state = STATE_HELLO;
+
                     handle_client_fsm(header, &employees, &clientStates[slot]);
                 }
             }
@@ -189,6 +191,8 @@ int main(int argc, char *argv[]) {
             printf("Could not crate header");
             return -1;
         }
+
+        output_file(dbfd, header, employees);
     }
     else { 
         dbfd = open_db_file(filepath);
@@ -211,6 +215,7 @@ int main(int argc, char *argv[]) {
 
     if(addstring != NULL) {
         add_employee(header, &employees, addstring);
+        output_file(dbfd, header, employees);
     }
 
     if(list) {
@@ -219,7 +224,7 @@ int main(int argc, char *argv[]) {
 
     poll_loop(port, header, employees);
     
-    output_file(dbfd, header, employees);
+    
 
     return 0;
 }
