@@ -124,6 +124,7 @@ void poll_loop(unsigned short port, struct dbheader_t *header, struct employee_t
                 else {
                     printf("Received %zd bytes from client on slot %d: %s\n", bytes_read, slot, clientStates[slot].buffer);
                     // Here you would typically process the received data
+                    handle_client_fsm(header, &employees, &clientStates[slot]);
                 }
             }
         }
@@ -136,7 +137,7 @@ int main(int argc, char *argv[]) {
     char *addstring = NULL;
 	bool newfile = false;
     bool list = false;
-    unsigned short port = 8080;
+    unsigned short port = SERVER_PORT;
     int c;
 
     int dbfd = -1;

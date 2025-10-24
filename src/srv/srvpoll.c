@@ -1,8 +1,37 @@
+#include <stdio.h>
 #include <string.h>
+#include <arpa/inet.h>
 #include "srvpoll.h"
+#include "common.h"
 
-void handle_client_fsm(struct dbheader_t *dbhdr, struct employee_t **employeeptr, clientstate_t *client, int dbfd) {
-    
+void handle_client_fsm(struct dbheader_t *dbhdr, struct employee_t **employees, clientstate_t *client) {
+    dbproto_hdr_t *hdr = (dbproto_hdr_t *)client->buffer;
+
+    hdr->type = ntohs(hdr->type);
+    hdr->len = ntohs(hdr->len);
+
+    switch (hdr->type)
+    {
+    case STATE_HELLO:
+        if(hdr->type != MSG_HELLO_REQ || hdr->len != 1){
+            printf("Invalid HELLO message\n");
+            return;
+        }
+
+        dbproto_hello_req *hello = (dbproto_hello_req*)&hdr[1];
+        hello->proto = ntohs(hello->proto);
+        if (hello->proto != PROTO_VER){
+            printf("Unsupported protocol version: %d\n", hello->proto);
+            return;
+        }
+        printf("Client HELLO received, protocol version: %d\n", hello->proto);
+        client->state = STATE_MSG;
+        break;
+    case STATE_MSG:
+        break;
+    default:
+        break;
+    }
 }
 
 void init_clients(clientstate_t *clientStates) {

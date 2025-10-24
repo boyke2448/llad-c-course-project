@@ -8,6 +8,8 @@
 
 #define PROTO_VER 100
 
+#define SERVER_PORT 5000
+
 typedef enum {
 	MSG_HELLO_REQ,
 	MSG_HELLO_RESP,
